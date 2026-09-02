@@ -15,12 +15,14 @@ import { Ionicons } from '@expo/vector-icons'
 import { useCollectionStore } from '@/stores/collectionStore'
 import { theme } from '@/constants/theme'
 import { VinylRecord } from '@/types'
+import { useProfileStore } from '@/stores/profileStore'
 
 const { width } = Dimensions.get('window')
 const CARD_SIZE = (width - theme.spacing.md * 3) / 2
 
 export default function CollectionScreen() {
     const { records, isLoading, fetchRecords } = useCollectionStore()
+    const { profile } = useProfileStore()
 
     useEffect(() => {
         fetchRecords()
@@ -64,7 +66,14 @@ export default function CollectionScreen() {
             <View style={styles.header}>
                 <Text style={styles.logo}>WAX</Text>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
-                    <Ionicons name="person-circle-outline" size={32} color={theme.colors.textMuted} />
+                    {profile?.avatar_url ? (
+                        <Image
+                            source={{ uri: profile.avatar_url }}
+                            style={styles.avatarImage}
+                        />
+                    ) : (
+                        <Ionicons name="person-circle-outline" size={32} color={theme.colors.textMuted} />
+                    )}
                 </TouchableOpacity>
             </View>
 
@@ -262,5 +271,10 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.4,
         shadowRadius: 8,
+    },
+    avatarImage: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
     },
 })

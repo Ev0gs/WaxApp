@@ -31,7 +31,29 @@ export const useProfileStore = create<ProfileStore>((set) => ({
             .single()
 
         if (!error && data) {
-            set({ profile: data })
+            // Si le profil n'a pas de données mais que Google en a fourni
+            const googleName = user.user_metadata?.full_name ?? user.user_metadata?.name
+            const googleAvatar = user.user_metadata?.avatar_url ?? user.user_metadata?.picture
+
+            const needsUpdate =
+                (!data.username && googleName) ||
+                (!data.avatar_url && googleAvatar)
+
+            if (needsUpdate) {
+                const { data: updated } = await supabase
+                    .from('profiles')
+                    .update({
+                        username: data.username ?? googleName,
+                        avatar_url: data.avatar_url ?? googleAvatar,
+                    })
+                    .eq('id', user.id)
+                    .select()
+                    .single()
+
+                set({ profile: updated })
+            } else {
+                set({ profile: data })
+            }
         }
 
         set({ isLoading: false })

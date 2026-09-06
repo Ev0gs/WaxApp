@@ -17,7 +17,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.evogs.wax"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +34,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "94a5e152-dca6-4352-9733-257c52be42e3"
+      }
+    }
   }
 }

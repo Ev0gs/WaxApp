@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { theme } from '@/constants/theme'
 import { BlurView } from 'expo-blur'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 export default function TabsLayout() {
     return (
@@ -11,19 +11,46 @@ export default function TabsLayout() {
                 headerShown: false,
                 tabBarActiveTintColor: theme.colors.accent,
                 tabBarInactiveTintColor: theme.colors.textMuted,
+                tabBarShowLabel: true,
+                tabBarLabelStyle: {
+                    fontSize: 10,
+                    fontWeight: '500',
+                    letterSpacing: 0.5,
+                },
                 tabBarStyle: {
+                    position: 'absolute',
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    borderRadius: 24,
                     backgroundColor: 'transparent',
                     borderTopWidth: 0,
                     elevation: 0,
-                    position: 'absolute',
+                    height: 64,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 12,
                 },
                 tabBarBackground: () => (
                     <BlurView
                         intensity={80}
                         tint="dark"
-                        style={StyleSheet.absoluteFill}
+                        style={[
+                            StyleSheet.absoluteFill,
+                            {
+                                borderRadius: 24,
+                                overflow: 'hidden',
+                                borderWidth: 1,
+                                borderColor: 'rgba(255,255,255,0.08)',
+                            }
+                        ]}
                     />
                 ),
+                tabBarItemStyle: {
+                    paddingVertical: 8,
+                    borderRadius: 16,
+                },
             }}
         >
             <Tabs.Screen

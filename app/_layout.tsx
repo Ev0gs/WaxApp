@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
+import { NavigationBar } from 'expo-navigation-bar'
 import { Slot, router } from 'expo-router'
 import {useAuthStore} from "@/stores/authStore";
 import {supabase} from "@/lib/supabase";
+import {Platform} from "react-native";
 
 export default function RootLayout() {
     const { setSession, setLoading } = useAuthStore()
@@ -23,5 +25,12 @@ export default function RootLayout() {
         return () => subscription.unsubscribe()
     }, [])
 
-    return <Slot />
+    return (
+        <>
+            {Platform.OS === 'android' && (
+                <NavigationBar hidden={true} style="dark" />
+            )}
+            <Slot />
+        </>
+    )
 }

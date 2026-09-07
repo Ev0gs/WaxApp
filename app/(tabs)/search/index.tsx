@@ -9,7 +9,7 @@ import {
     StyleSheet,
     ActivityIndicator, TouchableWithoutFeedback, Keyboard,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { searchVinyl } from '@/lib/discogs'
 import { useCollectionStore } from '@/stores/collectionStore'
@@ -19,6 +19,8 @@ import BarcodeScanner from '@/components/scanner/BarcodeScanner'
 import {router} from "expo-router";
 
 export default function SearchScreen() {
+    const insets = useSafeAreaInsets()
+
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<DiscogsSearchResult[]>([])
     const [isLoading, setIsLoading] = useState(false)
@@ -170,6 +172,7 @@ export default function SearchScreen() {
                             setQuery(barcode)
                             handleSearch(barcode)
                         }}
+                        availableHeight={insets.bottom + 64 + 16 + 16}
                     />
                 ) : isLoading ? (
                     <ActivityIndicator

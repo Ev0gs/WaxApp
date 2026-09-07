@@ -76,7 +76,7 @@ export const useProfileStore = create<ProfileStore>((set) => ({
         if (data) {
             set({ profile: data })
         }
-        
+
         return null
     },
 }))

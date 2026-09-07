@@ -18,13 +18,7 @@ export default function TabsLayout() {
                 tabBarActiveTintColor: theme.colors.accent,
                 tabBarInactiveTintColor: theme.colors.textMuted,
                 tabBarShowLabel: true,
-                tabBarLabelStyle: {
-                    fontSize: 10,
-                    fontWeight: '500',
-                    letterSpacing: 0.5,
-                    marginTop: 2,
-                },
-                tabBarStyle: isRecordDetail ? { display: 'none' } : {
+                tabBarStyle: {
                     position: 'absolute',
                     bottom: insets.bottom + 16,
                     left: 16,
@@ -38,6 +32,23 @@ export default function TabsLayout() {
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.3,
                     shadowRadius: 12,
+                },
+                tabBarItemStyle: {
+                    height: 64,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    marginTop: 4,
+                },
+                tabBarIconStyle: {
+                    marginTop: 0,
+                    marginBottom: 0,
+                },
+                tabBarLabelStyle: {
+                    fontSize: 10,
+                    fontWeight: '500',
+                    letterSpacing: 0.5,
+                    marginTop: 2,
+                    marginBottom: 0,
                 },
                 tabBarBackground: () => (
                     <BlurView
@@ -54,15 +65,6 @@ export default function TabsLayout() {
                         ]}
                     />
                 ),
-                tabBarItemStyle: {
-                    height: 64,
-                    paddingVertical: 0,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                },
-                tabBarIconStyle: {
-                    marginBottom: 0,
-                },
             }}
         >
             <Tabs.Screen

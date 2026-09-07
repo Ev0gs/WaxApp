@@ -8,8 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function TabsLayout() {
     const insets = useSafeAreaInsets()
     const segments = useSegments()
-
-    const isRecordDetail = segments.includes('record')
+    console.log('📍 Segments :', segments)
+    const isRecordDetail = segments.some(s => s === 'record')
 
     return (
         <Tabs
@@ -18,7 +18,7 @@ export default function TabsLayout() {
                 tabBarActiveTintColor: theme.colors.accent,
                 tabBarInactiveTintColor: theme.colors.textMuted,
                 tabBarShowLabel: true,
-                tabBarStyle: {
+                tabBarStyle: isRecordDetail ? { display: 'none' } : {
                     position: 'absolute',
                     bottom: insets.bottom + 16,
                     left: 16,

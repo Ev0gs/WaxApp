@@ -15,10 +15,12 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { getRelease } from '@/lib/discogs'
 import { useCollectionStore } from '@/stores/collectionStore'
 import { theme } from '@/constants/theme'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width, height } = Dimensions.get('window')
 
 export default function RecordDetailScreen() {
+    const insets = useSafeAreaInsets()
     const { id } = useLocalSearchParams<{ id: string }>()
     const [release, setRelease] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -89,7 +91,7 @@ export default function RecordDetailScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Cover image */}
+                {/* Cover image — commence depuis le haut absolu de l'écran */}
                 <View style={styles.coverContainer}>
                     {coverUrl ? (
                         <Image
@@ -110,12 +112,9 @@ export default function RecordDetailScreen() {
 
                 {/* Contenu */}
                 <View style={styles.content}>
-
-                    {/* Artist + Title */}
                     <Text style={styles.artist}>{artist.toUpperCase()}</Text>
                     <Text style={styles.title}>{release.title}</Text>
 
-                    {/* Chips */}
                     <ScrollView
                         horizontal
                         showsHorizontalScrollIndicator={false}
@@ -129,7 +128,6 @@ export default function RecordDetailScreen() {
                         ))}
                     </ScrollView>
 
-                    {/* Tracklist */}
                     {tracklist.length > 0 && (
                         <View style={styles.tracklist}>
                             <Text style={styles.tracklistTitle}>Tracklist</Text>
@@ -145,17 +143,20 @@ export default function RecordDetailScreen() {
                         </View>
                     )}
 
-                    <View style={{ height: 100 }} />
+                    <View style={{ height: insets.bottom + 100 }} />
                 </View>
             </ScrollView>
 
-            {/* Bouton retour */}
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            {/* Bouton retour — positionné avec insets.top */}
+            <TouchableOpacity
+                style={[styles.backButton, { top: insets.top + 8 }]}
+                onPress={() => router.back()}
+            >
                 <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
             </TouchableOpacity>
 
-            {/* CTA sticky */}
-            <View style={styles.ctaContainer}>
+            {/* CTA sticky — positionné avec insets.bottom */}
+            <View style={[styles.ctaContainer, { paddingBottom: insets.bottom + 16 }]}>
                 {isInCollection ? (
                     <View style={styles.ctaRow}>
                         <View style={styles.inCollectionBadge}>
@@ -194,7 +195,6 @@ const styles = StyleSheet.create({
     coverContainer: {
         width: width,
         height: height * 0.45,
-        position: 'relative',
     },
     cover: {
         width: '100%',
@@ -283,7 +283,6 @@ const styles = StyleSheet.create({
     },
     backButton: {
         position: 'absolute',
-        top: 50,
         left: theme.spacing.md,
         width: 36,
         height: 36,
@@ -298,7 +297,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         padding: theme.spacing.md,
-        paddingBottom: 34,
         backgroundColor: theme.colors.background,
         borderTopWidth: 1,
         borderTopColor: '#1A1A1A',

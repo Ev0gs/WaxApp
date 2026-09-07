@@ -27,10 +27,19 @@
       "expo-router",
       "expo-secure-store",
       [
+        "expo-navigation-bar",
+        {
+          "enforceContrast": false
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static"
+          },
+          "android": {
+            "enableEdgeToEdge": true
           }
         }
       ]

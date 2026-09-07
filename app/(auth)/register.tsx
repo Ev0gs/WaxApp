@@ -7,7 +7,7 @@ import {
     StyleSheet,
     ActivityIndicator,
     KeyboardAvoidingView,
-    Platform,
+    Platform, TouchableWithoutFeedback, Keyboard,
 } from 'react-native'
 import { router } from 'expo-router'
 import { supabase } from '@/lib/supabase'
@@ -54,59 +54,61 @@ export default function RegisterScreen() {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <View style={styles.inner}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <View style={styles.inner}>
 
-                <View style={styles.header}>
-                    <Text style={styles.logo}>WAX</Text>
-                    <Text style={styles.subtitle}>Create your account</Text>
-                </View>
+                    <View style={styles.header}>
+                        <Text style={styles.logo}>WAX</Text>
+                        <Text style={styles.subtitle}>Create your account</Text>
+                    </View>
 
-                <View style={styles.form}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Email"
-                        placeholderTextColor={theme.colors.textMuted}
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        placeholderTextColor={theme.colors.textMuted}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
+                    <View style={styles.form}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
 
-                    {error && <Text style={styles.error}>{error}</Text>}
+                        {error && <Text style={styles.error}>{error}</Text>}
 
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleRegister}
-                        disabled={loading}
-                    >
-                        {loading
-                            ? <ActivityIndicator color="#000" />
-                            : <Text style={styles.buttonText}>Create account</Text>
-                        }
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleRegister}
+                            disabled={loading}
+                        >
+                            {loading
+                                ? <ActivityIndicator color="#000" />
+                                : <Text style={styles.buttonText}>Create account</Text>
+                            }
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Text style={styles.link}>
+                            Already have an account?{' '}
+                            <Text style={styles.linkAccent}>Sign in</Text>
+                        </Text>
                     </TouchableOpacity>
+
                 </View>
-
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Text style={styles.link}>
-                        Already have an account?{' '}
-                        <Text style={styles.linkAccent}>Sign in</Text>
-                    </Text>
-                </TouchableOpacity>
-
-            </View>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     )
 }
 

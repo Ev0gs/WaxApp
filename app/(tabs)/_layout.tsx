@@ -1,10 +1,16 @@
-import { Tabs } from 'expo-router'
+import { Tabs, useSegments } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { theme } from '@/constants/theme'
 import { BlurView } from 'expo-blur'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function TabsLayout() {
+    const insets = useSafeAreaInsets()
+    const segments = useSegments()
+
+    const isRecordDetail = segments.includes('record')
+
     return (
         <Tabs
             screenOptions={{
@@ -16,10 +22,11 @@ export default function TabsLayout() {
                     fontSize: 10,
                     fontWeight: '500',
                     letterSpacing: 0.5,
+                    marginTop: 2,
                 },
-                tabBarStyle: {
+                tabBarStyle: isRecordDetail ? { display: 'none' } : {
                     position: 'absolute',
-                    bottom: 16,
+                    bottom: insets.bottom + 16,
                     left: 16,
                     right: 16,
                     borderRadius: 24,
@@ -48,8 +55,13 @@ export default function TabsLayout() {
                     />
                 ),
                 tabBarItemStyle: {
-                    paddingVertical: 8,
-                    borderRadius: 16,
+                    height: 64,
+                    paddingVertical: 0,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                },
+                tabBarIconStyle: {
+                    marginBottom: 0,
                 },
             }}
         >

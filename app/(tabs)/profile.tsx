@@ -8,7 +8,7 @@ import {
     TextInput,
     Image,
     ActivityIndicator,
-    Alert,
+    Alert, TouchableWithoutFeedback, Keyboard,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
@@ -123,139 +123,141 @@ export default function ProfileScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.content}
-                showsVerticalScrollIndicator={false}
-            >
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.title}>Profile</Text>
-                    <TouchableOpacity
-                        onPress={() => isEditing ? handleSave() : setIsEditing(true)}
-                        disabled={isSaving}
-                    >
-                        {isSaving ? (
-                            <ActivityIndicator color={theme.colors.accent} size="small" />
-                        ) : (
-                            <Text style={styles.editButton}>
-                                {isEditing ? 'Save' : 'Edit'}
-                            </Text>
-                        )}
-                    </TouchableOpacity>
-                </View>
-
-                {/* Avatar */}
-                <View style={styles.avatarSection}>
-                    <TouchableOpacity
-                        style={styles.avatarWrapper}
-                        onPress={handlePickAvatar}
-                        disabled={isUploadingAvatar}
-                    >
-                        {isUploadingAvatar ? (
-                            <View style={styles.avatar}>
-                                <ActivityIndicator color="#000" />
-                            </View>
-                        ) : profile?.avatar_url ? (
-                            <Image
-                                source={{ uri: profile.avatar_url }}
-                                style={styles.avatar}
-                            />
-                        ) : (
-                            <View style={styles.avatar}>
-                                <Text style={styles.avatarText}>{initials}</Text>
-                            </View>
-                        )}
-                        <View style={styles.avatarEditBadge}>
-                            <Ionicons name="camera" size={12} color="#000" />
-                        </View>
-                    </TouchableOpacity>
-
-                    {/* Username / Email */}
-                    {isEditing ? (
-                        <View style={styles.usernameInputWrapper}>
-                            <TextInput
-                                style={styles.usernameInput}
-                                value={username}
-                                onChangeText={setUsername}
-                                placeholder="Choose a username"
-                                placeholderTextColor={theme.colors.textMuted}
-                                autoCapitalize="none"
-                                autoFocus
-                            />
-                        </View>
-                    ) : (
-                        <Text style={styles.displayName}>{displayName}</Text>
-                    )}
-
-                    <Text style={styles.email}>{email}</Text>
-                    <Text style={styles.memberSince}>Member since {memberSince}</Text>
-                </View>
-
-                {/* Stats */}
-                <View style={styles.statsRow}>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>{records.length}</Text>
-                        <Text style={styles.statLabel}>Records</Text>
-                    </View>
-                    <View style={styles.divider} />
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>{totalArtists}</Text>
-                        <Text style={styles.statLabel}>Artists</Text>
-                    </View>
-                    <View style={styles.divider} />
-                    <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>{memberSince}</Text>
-                        <Text style={styles.statLabel}>Since</Text>
-                    </View>
-                </View>
-
-                {/* Settings */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Settings</Text>
-
-                    <TouchableOpacity style={styles.settingRow}>
-                        <Ionicons
-                            name="notifications-outline"
-                            size={20}
-                            color={theme.colors.textMuted}
-                        />
-                        <Text style={styles.settingLabel}>Notifications</Text>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={16}
-                            color={theme.colors.textMuted}
-                        />
-                    </TouchableOpacity>
-
-                    <View style={styles.separator} />
-
-                    <TouchableOpacity style={styles.settingRow}>
-                        <Ionicons
-                            name="information-circle-outline"
-                            size={20}
-                            color={theme.colors.textMuted}
-                        />
-                        <Text style={styles.settingLabel}>About</Text>
-                        <Ionicons
-                            name="chevron-forward"
-                            size={16}
-                            color={theme.colors.textMuted}
-                        />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Sign out */}
-                <TouchableOpacity
-                    style={styles.signOutButton}
-                    onPress={handleSignOut}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <SafeAreaView style={styles.container}>
+                <ScrollView
+                    contentContainerStyle={styles.content}
+                    showsVerticalScrollIndicator={false}
                 >
-                    <Ionicons name="log-out-outline" size={20} color="#FF5555" />
-                    <Text style={styles.signOutText}>Sign out</Text>
-                </TouchableOpacity>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <Text style={styles.title}>Profile</Text>
+                        <TouchableOpacity
+                            onPress={() => isEditing ? handleSave() : setIsEditing(true)}
+                            disabled={isSaving}
+                        >
+                            {isSaving ? (
+                                <ActivityIndicator color={theme.colors.accent} size="small" />
+                            ) : (
+                                <Text style={styles.editButton}>
+                                    {isEditing ? 'Save' : 'Edit'}
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
 
-            </ScrollView>
-        </SafeAreaView>
+                    {/* Avatar */}
+                    <View style={styles.avatarSection}>
+                        <TouchableOpacity
+                            style={styles.avatarWrapper}
+                            onPress={handlePickAvatar}
+                            disabled={isUploadingAvatar}
+                        >
+                            {isUploadingAvatar ? (
+                                <View style={styles.avatar}>
+                                    <ActivityIndicator color="#000" />
+                                </View>
+                            ) : profile?.avatar_url ? (
+                                <Image
+                                    source={{ uri: profile.avatar_url }}
+                                    style={styles.avatar}
+                                />
+                            ) : (
+                                <View style={styles.avatar}>
+                                    <Text style={styles.avatarText}>{initials}</Text>
+                                </View>
+                            )}
+                            <View style={styles.avatarEditBadge}>
+                                <Ionicons name="camera" size={12} color="#000" />
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* Username / Email */}
+                        {isEditing ? (
+                            <View style={styles.usernameInputWrapper}>
+                                <TextInput
+                                    style={styles.usernameInput}
+                                    value={username}
+                                    onChangeText={setUsername}
+                                    placeholder="Choose a username"
+                                    placeholderTextColor={theme.colors.textMuted}
+                                    autoCapitalize="none"
+                                    autoFocus
+                                />
+                            </View>
+                        ) : (
+                            <Text style={styles.displayName}>{displayName}</Text>
+                        )}
+
+                        <Text style={styles.email}>{email}</Text>
+                        <Text style={styles.memberSince}>Member since {memberSince}</Text>
+                    </View>
+
+                    {/* Stats */}
+                    <View style={styles.statsRow}>
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>{records.length}</Text>
+                            <Text style={styles.statLabel}>Records</Text>
+                        </View>
+                        <View style={styles.divider} />
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>{totalArtists}</Text>
+                            <Text style={styles.statLabel}>Artists</Text>
+                        </View>
+                        <View style={styles.divider} />
+                        <View style={styles.statItem}>
+                            <Text style={styles.statNumber}>{memberSince}</Text>
+                            <Text style={styles.statLabel}>Since</Text>
+                        </View>
+                    </View>
+
+                    {/* Settings */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Settings</Text>
+
+                        <TouchableOpacity style={styles.settingRow}>
+                            <Ionicons
+                                name="notifications-outline"
+                                size={20}
+                                color={theme.colors.textMuted}
+                            />
+                            <Text style={styles.settingLabel}>Notifications</Text>
+                            <Ionicons
+                                name="chevron-forward"
+                                size={16}
+                                color={theme.colors.textMuted}
+                            />
+                        </TouchableOpacity>
+
+                        <View style={styles.separator} />
+
+                        <TouchableOpacity style={styles.settingRow}>
+                            <Ionicons
+                                name="information-circle-outline"
+                                size={20}
+                                color={theme.colors.textMuted}
+                            />
+                            <Text style={styles.settingLabel}>About</Text>
+                            <Ionicons
+                                name="chevron-forward"
+                                size={16}
+                                color={theme.colors.textMuted}
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Sign out */}
+                    <TouchableOpacity
+                        style={styles.signOutButton}
+                        onPress={handleSignOut}
+                    >
+                        <Ionicons name="log-out-outline" size={20} color="#FF5555" />
+                        <Text style={styles.signOutText}>Sign out</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
+            </SafeAreaView>
+        </TouchableWithoutFeedback>
     )
 }
 

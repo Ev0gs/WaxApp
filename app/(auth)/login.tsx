@@ -7,7 +7,7 @@ import {
     StyleSheet,
     ActivityIndicator,
     KeyboardAvoidingView,
-    Platform,
+    Platform, TouchableWithoutFeedback, Keyboard,
 } from 'react-native'
 import { router } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
@@ -38,7 +38,10 @@ export default function LoginScreen() {
         setGoogleLoading(true)
         setError(null)
 
-        const redirectTo = makeRedirectUri({ scheme: 'wax' })
+        const redirectTo = makeRedirectUri({
+            scheme: 'wax',
+            path: 'auth/callback',
+        })
 
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -77,85 +80,87 @@ export default function LoginScreen() {
     }
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <View style={styles.inner}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <KeyboardAvoidingView
+                style={styles.container}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
+                <View style={styles.inner}>
 
-                {/* Logo */}
-                <View style={styles.header}>
-                    <Text style={styles.logo}>WAX</Text>
-                    <Text style={styles.subtitle}>Your vinyl library</Text>
-                </View>
+                    {/* Logo */}
+                    <View style={styles.header}>
+                        <Text style={styles.logo}>WAX</Text>
+                        <Text style={styles.subtitle}>Your vinyl library</Text>
+                    </View>
 
-                {/* Formulaire */}
-                <View style={styles.form}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Email"
-                        placeholderTextColor={theme.colors.textMuted}
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Password"
-                        placeholderTextColor={theme.colors.textMuted}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry
-                    />
+                    {/* Formulaire */}
+                    <View style={styles.form}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry
+                        />
 
-                    {error && <Text style={styles.error}>{error}</Text>}
+                        {error && <Text style={styles.error}>{error}</Text>}
 
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={handleLogin}
+                            disabled={loading}
+                        >
+                            {loading
+                                ? <ActivityIndicator color="#000" />
+                                : <Text style={styles.buttonText}>Sign in</Text>
+                            }
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Séparateur */}
+                    <View style={styles.separator}>
+                        <View style={styles.separatorLine} />
+                        <Text style={styles.separatorText}>or</Text>
+                        <View style={styles.separatorLine} />
+                    </View>
+
+                    {/* Bouton Google */}
                     <TouchableOpacity
-                        style={styles.button}
-                        onPress={handleLogin}
-                        disabled={loading}
+                        style={styles.googleButton}
+                        onPress={handleGoogleLogin}
+                        disabled={googleLoading}
                     >
-                        {loading
-                            ? <ActivityIndicator color="#000" />
-                            : <Text style={styles.buttonText}>Sign in</Text>
-                        }
+                        {googleLoading ? (
+                            <ActivityIndicator color={theme.colors.textPrimary} />
+                        ) : (
+                            <>
+                                <Ionicons name="logo-google" size={20} color={theme.colors.textPrimary} />
+                                <Text style={styles.googleButtonText}>Continue with Google</Text>
+                            </>
+                        )}
                     </TouchableOpacity>
+
+                    {/* Lien register */}
+                    <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+                        <Text style={styles.link}>
+                            No account yet?{' '}
+                            <Text style={styles.linkAccent}>Create one</Text>
+                        </Text>
+                    </TouchableOpacity>
+
                 </View>
-
-                {/* Séparateur */}
-                <View style={styles.separator}>
-                    <View style={styles.separatorLine} />
-                    <Text style={styles.separatorText}>or</Text>
-                    <View style={styles.separatorLine} />
-                </View>
-
-                {/* Bouton Google */}
-                <TouchableOpacity
-                    style={styles.googleButton}
-                    onPress={handleGoogleLogin}
-                    disabled={googleLoading}
-                >
-                    {googleLoading ? (
-                        <ActivityIndicator color={theme.colors.textPrimary} />
-                    ) : (
-                        <>
-                            <Ionicons name="logo-google" size={20} color={theme.colors.textPrimary} />
-                            <Text style={styles.googleButtonText}>Continue with Google</Text>
-                        </>
-                    )}
-                </TouchableOpacity>
-
-                {/* Lien register */}
-                <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
-                    <Text style={styles.link}>
-                        No account yet?{' '}
-                        <Text style={styles.linkAccent}>Create one</Text>
-                    </Text>
-                </TouchableOpacity>
-
-            </View>
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
     )
 }
 

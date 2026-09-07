@@ -9,7 +9,7 @@ import {
     ActivityIndicator,
     Dimensions,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { useCollectionStore } from '@/stores/collectionStore'
@@ -21,6 +21,7 @@ const { width } = Dimensions.get('window')
 const CARD_SIZE = (width - theme.spacing.md * 3) / 2
 
 export default function CollectionScreen() {
+    const insets = useSafeAreaInsets()
     const { records, isLoading, fetchRecords } = useCollectionStore()
     const { profile } = useProfileStore()
 
@@ -42,7 +43,7 @@ export default function CollectionScreen() {
         return (
             <TouchableOpacity
                 style={[styles.card, { transform: [{ rotate: rotation }] }]}
-                onPress={() => router.push(`/record/${item.discogs_id}`)}
+                onPress={() => router.push(`/(tabs)/record/${item.discogs_id}`)}
                 activeOpacity={0.85}
             >
                 <Image
@@ -128,8 +129,11 @@ export default function CollectionScreen() {
 
             {/* FAB */}
             <TouchableOpacity
-                style={styles.fab}
-                onPress={() => router.push('/(tabs)/search')}
+                style={[
+                    styles.fab,
+                    { bottom: insets.bottom + 64 + 16 + 16 }
+                ]}
+                onPress={() => router.navigate('/(tabs)/search')}
             >
                 <Ionicons name="add" size={28} color="#000" />
             </TouchableOpacity>
@@ -258,7 +262,6 @@ const styles = StyleSheet.create({
     },
     fab: {
         position: 'absolute',
-        bottom: 90,
         right: theme.spacing.lg,
         width: 56,
         height: 56,

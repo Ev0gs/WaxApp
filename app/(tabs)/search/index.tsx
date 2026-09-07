@@ -7,7 +7,7 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ActivityIndicator,
+    ActivityIndicator, TouchableWithoutFeedback, Keyboard,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
@@ -63,7 +63,7 @@ export default function SearchScreen() {
         return (
             <TouchableOpacity
                 style={styles.resultCard}
-                onPress={() => router.push(`/record/${item.id}`)}
+                onPress={() => router.push(`/(tabs)/search/record/${item.id}`)}
                 activeOpacity={0.8}
             >
                 <Image
@@ -102,87 +102,89 @@ export default function SearchScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <SafeAreaView style={styles.container}>
 
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.title}>Search</Text>
-            </View>
-
-            {/* Search bar */}
-            <View style={styles.searchBar}>
-                <Ionicons name="search-outline" size={20} color={theme.colors.textMuted} />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Artist, album, label..."
-                    placeholderTextColor={theme.colors.textMuted}
-                    value={query}
-                    onChangeText={setQuery}
-                    onSubmitEditing={() => handleSearch()}
-                    returnKeyType="search"
-                    autoCapitalize="none"
-                />
-                <TouchableOpacity onPress={() => setActiveTab(activeTab === 'scan' ? 'search' : 'scan')}>
-                    <Ionicons
-                        name="barcode-outline"
-                        size={24}
-                        color={activeTab === 'scan' ? theme.colors.accent : theme.colors.textMuted}
-                    />
-                </TouchableOpacity>
-            </View>
-
-            {/* Tabs */}
-            <View style={styles.tabs}>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'search' && styles.tabActive]}
-                    onPress={() => setActiveTab('search')}
-                >
-                    <Text style={[styles.tabText, activeTab === 'search' && styles.tabTextActive]}>
-                        By title / artist
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.tab, activeTab === 'scan' && styles.tabActive]}
-                    onPress={() => setActiveTab('scan')}
-                >
-                    <Text style={[styles.tabText, activeTab === 'scan' && styles.tabTextActive]}>
-                        Scan barcode
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* Contenu selon l'onglet actif */}
-            {activeTab === 'scan' ? (
-                <BarcodeScanner
-                    onScanned={(barcode) => {
-                        setActiveTab('search')
-                        setQuery(barcode)
-                        handleSearch(barcode)
-                    }}
-                />
-            ) : isLoading ? (
-                <ActivityIndicator
-                    color={theme.colors.accent}
-                    size="large"
-                    style={{ marginTop: 60 }}
-                />
-            ) : results.length === 0 ? (
-                <View style={styles.emptyState}>
-                    <Ionicons name="disc-outline" size={64} color={theme.colors.textMuted} />
-                    <Text style={styles.emptyTitle}>Search for a record</Text>
-                    <Text style={styles.emptySubtitle}>to add it to your crate</Text>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>Search</Text>
                 </View>
-            ) : (
-                <FlatList
-                    data={results}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderResult}
-                    contentContainerStyle={styles.list}
-                    showsVerticalScrollIndicator={false}
-                />
-            )}
 
-        </SafeAreaView>
+                {/* Search bar */}
+                <View style={styles.searchBar}>
+                    <Ionicons name="search-outline" size={20} color={theme.colors.textMuted} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Artist, album, label..."
+                        placeholderTextColor={theme.colors.textMuted}
+                        value={query}
+                        onChangeText={setQuery}
+                        onSubmitEditing={() => handleSearch()}
+                        returnKeyType="search"
+                        autoCapitalize="none"
+                    />
+                    <TouchableOpacity onPress={() => setActiveTab(activeTab === 'scan' ? 'search' : 'scan')}>
+                        <Ionicons
+                            name="barcode-outline"
+                            size={24}
+                            color={activeTab === 'scan' ? theme.colors.accent : theme.colors.textMuted}
+                        />
+                    </TouchableOpacity>
+                </View>
+
+                {/* Tabs */}
+                <View style={styles.tabs}>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'search' && styles.tabActive]}
+                        onPress={() => setActiveTab('search')}
+                    >
+                        <Text style={[styles.tabText, activeTab === 'search' && styles.tabTextActive]}>
+                            By title / artist
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.tab, activeTab === 'scan' && styles.tabActive]}
+                        onPress={() => setActiveTab('scan')}
+                    >
+                        <Text style={[styles.tabText, activeTab === 'scan' && styles.tabTextActive]}>
+                            Scan barcode
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Contenu selon l'onglet actif */}
+                {activeTab === 'scan' ? (
+                    <BarcodeScanner
+                        onScanned={(barcode) => {
+                            setActiveTab('search')
+                            setQuery(barcode)
+                            handleSearch(barcode)
+                        }}
+                    />
+                ) : isLoading ? (
+                    <ActivityIndicator
+                        color={theme.colors.accent}
+                        size="large"
+                        style={{ marginTop: 60 }}
+                    />
+                ) : results.length === 0 ? (
+                    <View style={styles.emptyState}>
+                        <Ionicons name="disc-outline" size={64} color={theme.colors.textMuted} />
+                        <Text style={styles.emptyTitle}>Search for a record</Text>
+                        <Text style={styles.emptySubtitle}>to add it to your crate</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={results}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={renderResult}
+                        contentContainerStyle={styles.list}
+                        showsVerticalScrollIndicator={false}
+                    />
+                )}
+
+            </SafeAreaView>
+        </TouchableWithoutFeedback>
     )
 }
 

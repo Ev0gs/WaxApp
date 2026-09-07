@@ -110,8 +110,11 @@ export default function ProfileScreen() {
                 .from('avatars')
                 .getPublicUrl(filePath)
 
+            // Ajoute un cache buster pour forcer le rechargement
+            const freshUrl = `${data.publicUrl}?t=${Date.now()}`
+
             // Met à jour le profil
-            await updateProfile({ avatar_url: data.publicUrl })
+            await updateProfile({ avatar_url: freshUrl })
 
         } catch (e) {
             Alert.alert('Error', 'Failed to upload avatar')

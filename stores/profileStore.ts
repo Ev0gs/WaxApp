@@ -63,16 +63,20 @@ export const useProfileStore = create<ProfileStore>((set) => ({
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return 'Not authenticated'
 
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from('profiles')
             .upsert({ id: user.id, ...updates, updated_at: new Date().toISOString() })
+            .select()
+            .single()
 
         if (error) return error.message
 
-        set(state => ({
-            profile: state.profile ? { ...state.profile, ...updates } : null
-        }))
-
+        // Met à jour le store avec les données retournées par Supabase
+        // plutôt qu'avec les updates locaux
+        if (data) {
+            set({ profile: data })
+        }
+        
         return null
     },
 }))

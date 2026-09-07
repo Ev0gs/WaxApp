@@ -21,6 +21,7 @@ import { theme } from '@/constants/theme'
 import * as FileSystem from 'expo-file-system/legacy'
 import { decode } from 'base64-arraybuffer'
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
+import Avatar from "@/components/ui/Avatar";
 
 export default function ProfileScreen() {
     const { session } = useAuthStore()
@@ -157,18 +158,16 @@ export default function ProfileScreen() {
                             disabled={isUploadingAvatar}
                         >
                             {isUploadingAvatar ? (
-                                <View style={styles.avatar}>
+                                <View style={[styles.avatarContainer, { width: 88, height: 88, borderRadius: 44 }]}>
                                     <ActivityIndicator color="#000" />
                                 </View>
-                            ) : profile?.avatar_url ? (
-                                <Image
-                                    source={{ uri: profile.avatar_url }}
-                                    style={styles.avatar}
-                                />
                             ) : (
-                                <View style={styles.avatar}>
-                                    <Text style={styles.avatarText}>{initials}</Text>
-                                </View>
+                                <Avatar
+                                    avatarUrl={profile?.avatar_url}
+                                    username={profile?.username}
+                                    email={email}
+                                    size={88}
+                                />
                             )}
                             <View style={styles.avatarEditBadge}>
                                 <Ionicons name="camera" size={12} color="#000" />
@@ -265,6 +264,11 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+    avatarContainer: {
+        backgroundColor: theme.colors.accent,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,

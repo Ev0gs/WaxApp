@@ -17,6 +17,8 @@ import { theme } from '@/constants/theme'
 import { VinylRecord } from '@/types'
 import { useProfileStore } from '@/stores/profileStore'
 import CollectionSkeleton from "@/components/ui/CollectionSkeleton";
+import {useAuthStore} from "@/stores/authStore";
+import Avatar from "@/components/ui/Avatar";
 
 const { width } = Dimensions.get('window')
 const CARD_SIZE = (width - theme.spacing.md * 3) / 2
@@ -24,6 +26,7 @@ const CARD_SIZE = (width - theme.spacing.md * 3) / 2
 export default function CollectionScreen() {
     const insets = useSafeAreaInsets()
     const { records, isLoading, fetchRecords } = useCollectionStore()
+    const { session } = useAuthStore()
     const { profile } = useProfileStore()
 
     useEffect(() => {
@@ -68,14 +71,12 @@ export default function CollectionScreen() {
             <View style={styles.header}>
                 <Text style={styles.logo}>WAX</Text>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/profile')}>
-                    {profile?.avatar_url ? (
-                        <Image
-                            source={{ uri: profile.avatar_url }}
-                            style={styles.avatarImage}
-                        />
-                    ) : (
-                        <Ionicons name="person-circle-outline" size={32} color={theme.colors.textMuted} />
-                    )}
+                    <Avatar
+                        avatarUrl={profile?.avatar_url}
+                        username={profile?.username}
+                        email={session?.user?.email}
+                        size={36}
+                    />
                 </TouchableOpacity>
             </View>
 

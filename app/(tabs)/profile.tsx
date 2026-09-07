@@ -8,7 +8,7 @@ import {
     TextInput,
     Image,
     ActivityIndicator,
-    Alert, TouchableWithoutFeedback, Keyboard,
+    Alert, TouchableWithoutFeedback, Keyboard, Linking,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
@@ -217,7 +217,10 @@ export default function ProfileScreen() {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Settings</Text>
 
-                        <TouchableOpacity style={styles.settingRow}>
+                        <TouchableOpacity
+                            style={styles.settingRow}
+                            onPress={() => Linking.openSettings()}
+                        >
                             <Ionicons
                                 name="notifications-outline"
                                 size={20}
@@ -233,7 +236,10 @@ export default function ProfileScreen() {
 
                         <View style={styles.separator} />
 
-                        <TouchableOpacity style={styles.settingRow}>
+                        <TouchableOpacity
+                            style={styles.settingRow}
+                            onPress={() => Linking.openSettings()}
+                        >
                             <Ionicons
                                 name="information-circle-outline"
                                 size={20}

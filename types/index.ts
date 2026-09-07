@@ -28,4 +28,5 @@ export type DiscogsSearchResult = {
     label: string[]
     genre: string[]
     format: string[]
+    type: string
 }

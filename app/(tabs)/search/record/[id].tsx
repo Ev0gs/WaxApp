@@ -20,8 +20,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 const { width, height } = Dimensions.get('window')
 
 export default function RecordDetailScreen() {
+    const { id, type } = useLocalSearchParams<{ id: string, type: string }>()
     const insets = useSafeAreaInsets()
-    const { id } = useLocalSearchParams<{ id: string }>()
     const [release, setRelease] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(true)
     const { records, addRecord, removeRecord } = useCollectionStore()
@@ -29,14 +29,17 @@ export default function RecordDetailScreen() {
     const isInCollection = records.some(r => r.discogs_id === Number(id))
 
     useEffect(() => {
+        console.log('🎵 Chargement du vinyle avec id :', id, '| type :', type)
         async function load() {
             setIsLoading(true)
-            const data = await getRelease(Number(id))
+            setRelease(null)
+            const data = await getRelease(Number(id), type ?? 'release')
+            console.log('✅ Vinyle chargé :', data?.title)
             setRelease(data)
             setIsLoading(false)
         }
         load()
-    }, [id])
+    }, [id, type])
 
     async function handleAdd() {
         if (!release) return

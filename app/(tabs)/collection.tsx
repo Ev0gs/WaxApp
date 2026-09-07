@@ -43,7 +43,7 @@ export default function CollectionScreen() {
         return (
             <TouchableOpacity
                 style={[styles.card, { transform: [{ rotate: rotation }] }]}
-                onPress={() => router.push(`/(tabs)/record/${item.discogs_id}`)}
+                onPress={() => router.push(`/(tabs)/search/record/${item.discogs_id}?type=release`)}
                 activeOpacity={0.85}
             >
                 <Image

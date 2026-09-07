@@ -28,9 +28,10 @@ export async function searchByBarcode(barcode: string) {
     return data.results ?? []
 }
 
-export async function getRelease(id: number) {
+export async function getRelease(id: number, type: string = 'release') {
+    const endpoint = type === 'master' ? 'masters' : 'releases'
     const res = await fetch(
-        `${BASE_URL}/releases/${id}`,
+        `${BASE_URL}/${endpoint}/${id}`,
         { headers: getHeaders() }
     )
     return res.json()

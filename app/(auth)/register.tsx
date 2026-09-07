@@ -7,30 +7,87 @@ import {
     StyleSheet,
     ActivityIndicator,
     KeyboardAvoidingView,
-    Platform, TouchableWithoutFeedback, Keyboard,
+    Platform,
+    TouchableWithoutFeedback,
+    Keyboard,
+    ScrollView,
 } from 'react-native'
 import { router } from 'expo-router'
 import { supabase } from '@/lib/supabase'
 import { theme } from '@/constants/theme'
 
 export default function RegisterScreen() {
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    async function handleRegister() {
-        setLoading(true)
-        setError(null)
-
-        const { error } = await supabase.auth.signUp({ email, password })
-
-        if (error) {
-            setError(error.message)
-        } else {
-            setSuccess(true)
+    function validate() {
+        if (!username.trim()) {
+            setError('Please choose a username')
+            return false
         }
+        if (username.trim().length < 3) {
+            setError('Username must be at least 3 characters')
+            return false
+        }
+        if (!email.trim()) {
+            setError('Please enter your email')
+            return false
+        }
+        if (!password) {
+            setError('Please enter a password')
+            return false
+        }
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters')
+            return false
+        }
+        if (password !== confirmPassword) {
+            setError('Passwords do not match')
+            return false
+        }
+        return true
+    }
+
+    async function handleRegister() {
+        setError(null)
+        if (!validate()) return
+
+        setLoading(true)
+
+        const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    username: username.trim(),
+                    full_name: username.trim(),
+                }
+            }
+        })
+
+        if (signUpError) {
+            setError(signUpError.message)
+            setLoading(false)
+            return
+        }
+
+        // Sauvegarde le username dans la table profiles
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+            await supabase
+                .from('profiles')
+                .upsert({
+                    id: user.id,
+                    username: username.trim(),
+                })
+        }
+
+        setSuccess(true)
         setLoading(false)
     }
 
@@ -59,14 +116,26 @@ export default function RegisterScreen() {
                 style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <View style={styles.inner}>
-
+                <ScrollView
+                    contentContainerStyle={styles.inner}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
                     <View style={styles.header}>
                         <Text style={styles.logo}>WAX</Text>
                         <Text style={styles.subtitle}>Create your account</Text>
                     </View>
 
                     <View style={styles.form}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Username"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={username}
+                            onChangeText={setUsername}
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
                         <TextInput
                             style={styles.input}
                             placeholder="Email"
@@ -84,6 +153,37 @@ export default function RegisterScreen() {
                             onChangeText={setPassword}
                             secureTextEntry
                         />
+                        <TextInput
+                            style={[
+                                styles.input,
+                                confirmPassword.length > 0 && password !== confirmPassword
+                                    ? styles.inputError
+                                    : null,
+                                confirmPassword.length > 0 && password === confirmPassword
+                                    ? styles.inputSuccess
+                                    : null,
+                            ]}
+                            placeholder="Confirm password"
+                            placeholderTextColor={theme.colors.textMuted}
+                            value={confirmPassword}
+                            onChangeText={setConfirmPassword}
+                            secureTextEntry
+                        />
+
+                        {/* Indicateur de correspondance des mots de passe */}
+                        {confirmPassword.length > 0 && (
+                            <Text style={[
+                                styles.passwordHint,
+                                password === confirmPassword
+                                    ? styles.passwordHintSuccess
+                                    : styles.passwordHintError
+                            ]}>
+                                {password === confirmPassword
+                                    ? '✓ Passwords match'
+                                    : '✗ Passwords do not match'
+                                }
+                            </Text>
+                        )}
 
                         {error && <Text style={styles.error}>{error}</Text>}
 
@@ -105,8 +205,7 @@ export default function RegisterScreen() {
                             <Text style={styles.linkAccent}>Sign in</Text>
                         </Text>
                     </TouchableOpacity>
-
-                </View>
+                </ScrollView>
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     )
@@ -118,9 +217,10 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
     },
     inner: {
-        flex: 1,
+        flexGrow: 1,
         justifyContent: 'center',
         paddingHorizontal: theme.spacing.lg,
+        paddingVertical: theme.spacing.xl,
         gap: 32,
     },
     header: {
@@ -149,6 +249,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         borderWidth: 1,
         borderColor: '#2A2A2A',
+    },
+    inputError: {
+        borderColor: '#FF5555',
+    },
+    inputSuccess: {
+        borderColor: theme.colors.success,
+    },
+    passwordHint: {
+        fontSize: 13,
+        marginTop: -4,
+    },
+    passwordHintSuccess: {
+        color: theme.colors.success,
+    },
+    passwordHintError: {
+        color: '#FF5555',
     },
     button: {
         backgroundColor: theme.colors.accent,

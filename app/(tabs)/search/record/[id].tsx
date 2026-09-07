@@ -236,7 +236,7 @@ export default function RecordDetailScreen() {
 const styles = StyleSheet.create({
     pagination: {
         position: 'absolute',
-        bottom: 130,
+        bottom: 16,
         left: 0,
         right: 0,
         flexDirection: 'row',

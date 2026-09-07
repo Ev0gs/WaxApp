@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {
     View,
     Text,
@@ -8,6 +8,9 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Dimensions,
+    FlatList,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
 } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
@@ -20,6 +23,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 const { width, height } = Dimensions.get('window')
 
 export default function RecordDetailScreen() {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const imageScrollRef = useRef<FlatList>(null)
     const { id, type } = useLocalSearchParams<{ id: string, type: string }>()
     const insets = useSafeAreaInsets()
     const [release, setRelease] = useState<any>(null)
@@ -94,23 +99,70 @@ export default function RecordDetailScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
             >
-                {/* Cover image — commence depuis le haut absolu de l'écran */}
+                {/* Carousel d'images */}
                 <View style={styles.coverContainer}>
-                    {coverUrl ? (
-                        <Image
-                            source={{ uri: coverUrl }}
-                            style={styles.cover}
-                            resizeMode="cover"
-                        />
+                    {release.images && release.images.length > 0 ? (
+                        <>
+                            <FlatList
+                                ref={imageScrollRef}
+                                data={release.images}
+                                horizontal
+                                pagingEnabled
+                                showsHorizontalScrollIndicator={false}
+                                keyExtractor={(_, index) => index.toString()}
+                                onScroll={(e: NativeSyntheticEvent<NativeScrollEvent>) => {
+                                    const index = Math.round(e.nativeEvent.contentOffset.x / width)
+                                    setCurrentImageIndex(index)
+                                }}
+                                scrollEventThrottle={16}
+                                renderItem={({ item }: { item: any }) => (
+                                    <View style={[styles.coverItem, { width: width }]}>
+                                        <Image
+                                            source={{ uri: item.uri }}
+                                            style={styles.coverImage}
+                                            resizeMode="contain"
+                                        />
+                                    </View>
+                                )}
+                            />
+                            <LinearGradient
+                                colors={['transparent', theme.colors.background]}
+                                style={styles.coverGradient}
+                            />
+
+                            {/* Indicateurs de pagination */}
+                            {release.images.length > 1 && (
+                                <View style={styles.pagination}>
+                                    {release.images.map((_: any, index: number) => (
+                                        <View
+                                            key={index}
+                                            style={[
+                                                styles.dot,
+                                                index === currentImageIndex && styles.dotActive
+                                            ]}
+                                        />
+                                    ))}
+                                </View>
+                            )}
+
+                            {/* Compteur */}
+                            <View style={styles.imageCounter}>
+                                <Text style={styles.imageCounterText}>
+                                    {currentImageIndex + 1} / {release.images.length}
+                                </Text>
+                            </View>
+                        </>
                     ) : (
-                        <View style={[styles.cover, styles.coverPlaceholder]}>
-                            <Ionicons name="disc-outline" size={80} color={theme.colors.textMuted} />
-                        </View>
+                        <>
+                            <View style={[styles.coverPlaceholder]}>
+                                <Ionicons name="disc-outline" size={80} color={theme.colors.textMuted} />
+                            </View>
+                            <LinearGradient
+                                colors={['transparent', theme.colors.background]}
+                                style={styles.coverGradient}
+                            />
+                        </>
                     )}
-                    <LinearGradient
-                        colors={['transparent', theme.colors.background]}
-                        style={styles.coverGradient}
-                    />
                 </View>
 
                 {/* Contenu */}
@@ -182,6 +234,39 @@ export default function RecordDetailScreen() {
 }
 
 const styles = StyleSheet.create({
+    pagination: {
+        position: 'absolute',
+        bottom: 130,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 6,
+    },
+    dot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: 'rgba(255,255,255,0.4)',
+    },
+    dotActive: {
+        backgroundColor: theme.colors.accent,
+        width: 18,
+    },
+    imageCounter: {
+        position: 'absolute',
+        top: 16,
+        right: theme.spacing.md,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 12,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+    },
+    imageCounterText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: '600',
+    },
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
@@ -198,10 +283,19 @@ const styles = StyleSheet.create({
     coverContainer: {
         width: width,
         height: height * 0.45,
+        overflow: 'hidden',
     },
-    cover: {
-        width: '100%',
+    coverItem: {
+        width: width,
         height: '100%',
+        backgroundColor: theme.colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    coverImage: {
+        width: '100%',
+        height: undefined,
+        aspectRatio: 1, // ← garde les proportions carrées comme une pochette vinyle
     },
     coverPlaceholder: {
         backgroundColor: theme.colors.surface,

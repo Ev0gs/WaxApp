@@ -8,7 +8,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 export default function TabsLayout() {
     const insets = useSafeAreaInsets()
     const segments = useSegments()
-    console.log('📍 Segments :', segments)
     const isRecordDetail = segments.some(s => s === 'record')
 
     return (

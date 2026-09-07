@@ -34,12 +34,12 @@ export default function RecordDetailScreen() {
     const isInCollection = records.some(r => r.discogs_id === Number(id))
 
     useEffect(() => {
-        console.log('🎵 Chargement du vinyle avec id :', id, '| type :', type)
+
         async function load() {
             setIsLoading(true)
             setRelease(null)
             const data = await getRelease(Number(id), type ?? 'release')
-            console.log('✅ Vinyle chargé :', data?.title)
+
             setRelease(data)
             setIsLoading(false)
         }

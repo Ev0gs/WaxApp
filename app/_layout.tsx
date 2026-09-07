@@ -14,25 +14,17 @@ export default function RootLayout() {
 
     useEffect(() => {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
-            console.log('🔍 Session trouvée :', session ? 'OUI' : 'NON')
 
             if (session) {
-                console.log('👤 Vérification de l utilisateur côté serveur...')
                 const { data: { user }, error } = await supabase.auth.getUser()
 
-                console.log('✅ User retourné par Supabase :', user ? user.id : 'NULL')
-                console.log('❌ Erreur retournée :', error ? error.message : 'AUCUNE')
-
                 if (error || !user) {
-                    console.log('🚫 Utilisateur invalide → déconnexion forcée')
                     await supabase.auth.signOut()
                     setSession(null)
                     setLoading(false)
                     router.replace('/(auth)/login')
                     return
                 }
-
-                console.log('🎉 Utilisateur valide → redirection collection')
             }
 
             setSession(session)
@@ -42,8 +34,6 @@ export default function RootLayout() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (_event, session) => {
-                console.log('🔄 Auth state changed :', _event)
-                console.log('🔍 Session :', session ? 'OUI' : 'NON')
 
                 // Redirige vers l'écran de reset password
                 if (_event === 'PASSWORD_RECOVERY') {
@@ -53,7 +43,6 @@ export default function RootLayout() {
 
                 // Ne pas rediriger sur ces événements — l'utilisateur reste où il est
                 if (_event === 'TOKEN_REFRESHED' || _event === 'USER_UPDATED') {
-                    console.log('🔁 Token rafraîchi ou user mis à jour → pas de redirection')
                     setSession(session)
                     return
                 }
@@ -61,11 +50,7 @@ export default function RootLayout() {
                 if (session) {
                     const { data: { user }, error } = await supabase.auth.getUser()
 
-                    console.log('✅ User :', user ? user.id : 'NULL')
-                    console.log('❌ Erreur :', error ? error.message : 'AUCUNE')
-
                     if (error || !user) {
-                        console.log('🚫 Session invalide → déconnexion forcée')
                         await supabase.auth.signOut()
                         setSession(null)
                         router.replace('/(auth)/login')

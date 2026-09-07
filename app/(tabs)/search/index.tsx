@@ -33,13 +33,6 @@ export default function SearchScreen() {
         setIsLoading(true)
         const data = await searchVinyl(q)
 
-        console.log('🖼️ Images des résultats :')
-        data.forEach((item: DiscogsSearchResult, index: number) => {
-            console.log(`[${index}] ${item.title}`)
-            console.log(`  thumb: "${item.thumb}"`)
-            console.log(`  cover_image: "${item.cover_image}"`)
-        })
-
         setResults(data)
         setIsLoading(false)
     }
@@ -74,7 +67,6 @@ export default function SearchScreen() {
             <TouchableOpacity
                 style={styles.resultCard}
                 onPress={() => {
-                    console.log('🔗 Navigation vers id :', item.id, '| type :', item.type, '| titre :', item.title)
                     router.push(`/(tabs)/search/record/${item.id}?type=${item.type ?? 'release'}`)}}
                 activeOpacity={0.8}
             >

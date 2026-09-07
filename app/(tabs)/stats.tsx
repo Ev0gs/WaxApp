@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useCollectionStore } from '@/stores/collectionStore'
 import { theme } from '@/constants/theme'
+import StatsSkeleton from "@/components/ui/StatsSkeleton";
 
 export default function StatsScreen() {
     const { records } = useCollectionStore()
@@ -51,7 +52,7 @@ export default function StatsScreen() {
     const maxDecadeCount = Math.max(...Object.values(decadeCounts), 1)
 
     if (isLoading) return <StatsSkeleton />
-    
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView

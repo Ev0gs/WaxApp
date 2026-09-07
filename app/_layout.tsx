@@ -45,6 +45,12 @@ export default function RootLayout() {
                 console.log('🔄 Auth state changed :', _event)
                 console.log('🔍 Session :', session ? 'OUI' : 'NON')
 
+                // Redirige vers l'écran de reset password
+                if (_event === 'PASSWORD_RECOVERY') {
+                    router.replace('/reset-password')
+                    return
+                }
+
                 // Ne pas rediriger sur ces événements — l'utilisateur reste où il est
                 if (_event === 'TOKEN_REFRESHED' || _event === 'USER_UPDATED') {
                     console.log('🔁 Token rafraîchi ou user mis à jour → pas de redirection')

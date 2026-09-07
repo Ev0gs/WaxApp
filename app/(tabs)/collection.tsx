@@ -16,6 +16,7 @@ import { useCollectionStore } from '@/stores/collectionStore'
 import { theme } from '@/constants/theme'
 import { VinylRecord } from '@/types'
 import { useProfileStore } from '@/stores/profileStore'
+import CollectionSkeleton from "@/components/ui/CollectionSkeleton";
 
 const { width } = Dimensions.get('window')
 const CARD_SIZE = (width - theme.spacing.md * 3) / 2
@@ -104,11 +105,7 @@ export default function CollectionScreen() {
 
             {/* Grid */}
             {isLoading ? (
-                <ActivityIndicator
-                    color={theme.colors.accent}
-                    size="large"
-                    style={{ marginTop: 60 }}
-                />
+                <CollectionSkeleton />
             ) : records.length === 0 ? (
                 <View style={styles.emptyState}>
                     <Ionicons name="disc-outline" size={64} color={theme.colors.textMuted} />

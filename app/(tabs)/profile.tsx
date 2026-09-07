@@ -20,11 +20,12 @@ import { useProfileStore } from '@/stores/profileStore'
 import { theme } from '@/constants/theme'
 import * as FileSystem from 'expo-file-system/legacy'
 import { decode } from 'base64-arraybuffer'
+import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 
 export default function ProfileScreen() {
     const { session } = useAuthStore()
     const { records } = useCollectionStore()
-    const { profile, fetchProfile, updateProfile } = useProfileStore()
+    const { profile, isLoading, fetchProfile, updateProfile } = useProfileStore()
 
     const [isEditing, setIsEditing] = useState(false)
     const [username, setUsername] = useState('')
@@ -121,6 +122,8 @@ export default function ProfileScreen() {
     async function handleSignOut() {
         await supabase.auth.signOut()
     }
+
+    if (isLoading) return <ProfileSkeleton />
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -11,6 +11,7 @@ import { theme } from '@/constants/theme'
 
 export default function StatsScreen() {
     const { records } = useCollectionStore()
+    const { isLoading } = useCollectionStore()
 
     // Calculs des stats
     const totalRecords = records.length
@@ -49,6 +50,8 @@ export default function StatsScreen() {
     const maxGenreCount = sortedGenres[0]?.[1] ?? 1
     const maxDecadeCount = Math.max(...Object.values(decadeCounts), 1)
 
+    if (isLoading) return <StatsSkeleton />
+    
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView

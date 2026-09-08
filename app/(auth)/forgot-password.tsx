@@ -32,7 +32,7 @@ export default function ForgotPasswordScreen() {
         setError(null)
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: 'wax://reset-password',
+            redirectTo: 'https://wax-web-delta.vercel.app/reset-password',
         })
 
         if (error) {

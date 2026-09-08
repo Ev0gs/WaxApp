@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
     View,
     Text,
@@ -11,8 +11,7 @@ import {
     TouchableWithoutFeedback,
     Keyboard,
 } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
-import * as Linking from 'expo-linking'
+import { router } from 'expo-router'
 import { supabase } from '@/lib/supabase'
 import { theme } from '@/constants/theme'
 
@@ -20,72 +19,8 @@ export default function ResetPasswordScreen() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [loading, setLoading] = useState(false)
-    const [sessionReady, setSessionReady] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
-
-    useEffect(() => {
-        // Récupère l'URL qui a ouvert l'app
-        async function handleDeepLink() {
-            const url = await Linking.getInitialURL()
-            console.log('🔗 Deep link URL :', url)
-
-            if (url) {
-                await processUrl(url)
-            }
-        }
-
-        // Écoute aussi les deep links si l'app était déjà ouverte
-        const subscription = Linking.addEventListener('url', ({ url }) => {
-            console.log('🔗 Deep link reçu :', url)
-            processUrl(url)
-        })
-
-        handleDeepLink()
-
-        return () => subscription.remove()
-    }, [])
-
-    async function processUrl(url: string) {
-        try {
-            // Extrait les paramètres du fragment (#) ou query (?)
-            const params = url.includes('#')
-                ? new URLSearchParams(url.split('#')[1])
-                : new URLSearchParams(url.split('?')[1])
-
-            const accessToken = params.get('access_token')
-            const refreshToken = params.get('refresh_token')
-
-            console.log('🔑 Access token trouvé :', accessToken ? 'OUI' : 'NON')
-
-            if (accessToken && refreshToken) {
-                const { error } = await supabase.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken,
-                })
-
-                if (error) {
-                    console.log('❌ Erreur setSession :', error.message)
-                    setError('Invalid or expired reset link. Please request a new one.')
-                } else {
-                    console.log('✅ Session établie')
-                    setSessionReady(true)
-                }
-            } else {
-                // Vérifie si une session existe déjà via PASSWORD_RECOVERY
-                const { data: { session } } = await supabase.auth.getSession()
-                if (session) {
-                    console.log('✅ Session déjà présente')
-                    setSessionReady(true)
-                } else {
-                    setError('Invalid or expired reset link. Please request a new one.')
-                }
-            }
-        } catch (e) {
-            console.log('❌ Erreur processUrl :', e)
-            setError('Something went wrong. Please try again.')
-        }
-    }
 
     async function handleResetPassword() {
         if (!password) {
@@ -123,38 +58,6 @@ export default function ResetPasswordScreen() {
                     <Text style={styles.logo}>WAX</Text>
                     <Text style={styles.successTitle}>Password updated!</Text>
                     <Text style={styles.successText}>Redirecting you to login...</Text>
-                </View>
-            </View>
-        )
-    }
-
-    // Session pas encore établie
-    if (!sessionReady && !error) {
-        return (
-            <View style={styles.container}>
-                <View style={styles.inner}>
-                    <Text style={styles.logo}>WAX</Text>
-                    <ActivityIndicator color={theme.colors.accent} size="large" />
-                    <Text style={styles.loadingText}>Verifying your reset link...</Text>
-                </View>
-            </View>
-        )
-    }
-
-    // Lien invalide ou expiré
-    if (error && !sessionReady) {
-        return (
-            <View style={styles.container}>
-                <View style={styles.inner}>
-                    <Text style={styles.logo}>WAX</Text>
-                    <Text style={styles.errorTitle}>Link expired</Text>
-                    <Text style={styles.errorText}>{error}</Text>
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => router.replace('/(auth)/forgot-password')}
-                    >
-                        <Text style={styles.buttonText}>Request new link</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
         )
@@ -314,16 +217,6 @@ const styles = StyleSheet.create({
         fontSize: 13,
         textAlign: 'center',
     },
-    errorTitle: {
-        fontSize: 24,
-        fontWeight: '800',
-        color: theme.colors.textPrimary,
-    },
-    errorText: {
-        color: theme.colors.textMuted,
-        fontSize: 14,
-        textAlign: 'center',
-    },
     successTitle: {
         fontSize: 24,
         fontWeight: '800',
@@ -333,10 +226,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: theme.colors.textMuted,
         textAlign: 'center',
-    },
-    loadingText: {
-        color: theme.colors.textMuted,
-        fontSize: 14,
-        marginTop: 16,
     },
 })

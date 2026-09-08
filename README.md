@@ -1,4 +1,4 @@
-# WAX 📀
+# WAX (App) 📀
 
 > Your vinyl library, in your pocket.
 
@@ -227,7 +227,7 @@ eas build --platform android --profile preview
 - [ ] Discogs OAuth — import your existing Discogs collection
 - [ ] Collection sharing — share your crate with friends
 - [ ] iOS build & App Store release
-- [ ] Web version — [wax-web](https://github.com/your-username/wax-web)
+- [ ] Web version — [wax-web](https://github.com/Ev0gs/WaxWeb)
 
 ---
 
@@ -245,6 +245,6 @@ MIT — feel free to use this project as inspiration for your own.
 
 ---
 
-<p align="center">
+<p style="text-align: center;">
   Built with 🎵 and too many vinyl records
 </p>
